@@ -7,20 +7,20 @@ function Todo({logs}) {
   const [update, setUpdate] = useState(false);
   const [updatedIndex, setUpdatedIndex] = useState(-1);
   const [updatedTask, setUpdatedTask] = useState('');
-  const [completedTask, setCompletedTask] = useState([]);
 
   const getNewTask = (e) =>{
     setNewTask(e.target.value);
   }
 
   const addNewTask = () =>{
-    setValue((prevValue) =>
-      [...prevValue, newTask]
-    );
-    setCompletedTask((prevValue) =>
-      [...prevValue, false]
-    );
-
+    setValue((prevValue) =>[
+      ...prevValue,
+      {
+        id: newTask + "id",
+        title: newTask,
+        isActive: true,
+      },
+    ]);
     logs('Add task:' + newTask);
 
     setNewTask('');
@@ -28,10 +28,7 @@ function Todo({logs}) {
 
   const deleteTask = (key) =>{
     setValue((prevValue) =>
-      prevValue.filter((item, index) => index !== key)
-    );
-    setCompletedTask((prevValue) =>
-      prevValue.filter((item, index) => index !== key)
+      prevValue.filter((item) => item.id !== key)
     );
     logs('Delete task with index:' + key);
   }
@@ -43,16 +40,17 @@ function Todo({logs}) {
   const editTask = (key) =>{
     setUpdate(update => !update);
     setUpdatedTask(
-      value.filter((item, index) => index == key)
+      value.find((item) => item.id == key).title
     );
     setUpdatedIndex(key);
   }
 
   const updateTask = () => {
     setValue((prevValue) =>
-      prevValue.map((item, index) =>{
-        if(updatedIndex == index){
-          return updatedTask;
+      prevValue.map((item) =>{
+        if(updatedIndex == item.id){
+          return {...item,
+            title: updatedTask,}
         }
         else 
          return item;
@@ -65,8 +63,9 @@ function Todo({logs}) {
   }
 
   const TaskDone = (key) =>{
-    setCompletedTask((prevValue)=>
-      prevValue.map((item, index) => (key === index? !item : item ))
+    setValue((prevValue)=>
+      prevValue.map((item) => (key === item.id? {...item,
+        isActive: !item.isActive,} : item ))
     );
   }
 
@@ -87,10 +86,10 @@ function Todo({logs}) {
       )}
       </div>
       <ul>
-      {value.map((item, index) => 
-          <li key={index}><p style={{ textDecoration: completedTask[index] ? 'line-through' : 'none'}} onClick={() => TaskDone(index)}>{item}</p>
-          <button onClick={() => editTask(index)}><img src='./img/edit.png' alt='Edit' /></button>
-          <button onClick={() => deleteTask(index)}><img src='./img/delete.png' alt='Delete' /></button></li>
+      {value.map((item) => 
+          <li key={item.id}><p style={{ textDecoration: item.isActive ?'none': 'line-through'}} onClick={() => TaskDone(item.id)}>{item.title}</p>
+          <button onClick={() => editTask(item.id)}><img src='./img/edit.png' alt='Edit' /></button>
+          <button onClick={() => deleteTask(item.id)}><img src='./img/delete.png' alt='Delete' /></button></li>
         )}
       </ul>
     </div>

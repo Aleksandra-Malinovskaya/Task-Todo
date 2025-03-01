@@ -1,16 +1,8 @@
-import './App.css'
-import Todo from './Todo'
-import withLogger from './withLogger'
+import './App.css';
+import { LoggedTodoList } from './WithLogger';
 
 function App() {
-  
-  const LoggedTodoList = withLogger(Todo);
-
-  return (
-    <>
-      <LoggedTodoList/>
-    </>
-  )
+  return <LoggedTodoList />;
 }
 
-export default App
+export default App;

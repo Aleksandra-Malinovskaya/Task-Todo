@@ -1,12 +1,15 @@
+import { Todo } from './Todo';
 
-const withLogger = (ComponentWithLogs) =>{
-    return(props) => {
-        const logs = (action) =>{
-            console.log(action);
-        }
-        
-        return <ComponentWithLogs {...props} logs={logs}/>
-    }
-}
+const WithLogger = (ComponentWithLogs) => {
+  return (props) => {
+    const logs = (action) => {
+      console.log(action);
+    };
 
-export default withLogger;
+    return <ComponentWithLogs {...props} logs={logs} />;
+  };
+};
+
+const LoggedTodoList = WithLogger(Todo);
+
+export { LoggedTodoList };

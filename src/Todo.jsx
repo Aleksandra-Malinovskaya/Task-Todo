@@ -85,7 +85,7 @@ function Todo({ logs }) {
           )}
         </div>
         <TasksList
-          value={tasks}
+          value={tasks.filter((task) => task.id !== updatedIndex)}
           taskDone={taskDone}
           editTask={editTask}
           deleteTask={deleteTask}

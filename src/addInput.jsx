@@ -1,6 +1,5 @@
 const AddInput = ({ newTask, getNewTask, addNewTask }) => {
   return (
-    <>
       <div className="input_group">
         <input
           type="text"
@@ -10,7 +9,6 @@ const AddInput = ({ newTask, getNewTask, addNewTask }) => {
         />
         <button onClick={addNewTask}>Add task</button>
       </div>
-    </>
   );
 };
 

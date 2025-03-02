@@ -5,4 +5,4 @@ function App() {
   return <LoggedTodoList />;
 }
 
-export default App;
+export {App};

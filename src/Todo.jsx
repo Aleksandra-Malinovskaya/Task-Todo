@@ -76,19 +76,16 @@ function Todo({ logs }) {
             getNewTask={getNewTask}
             addNewTask={addNewTask}
           />
-          {update && (
-            <EditInput
-              updatedTask={updatedTask}
-              getUpdateTask={getUpdateTask}
-              updateTask={updateTask}
-            />
-          )}
         </div>
         <TasksList
-          value={tasks.filter((task) => task.id !== updatedIndex)}
+          value={tasks}
           taskDone={taskDone}
           editTask={editTask}
           deleteTask={deleteTask}
+          updatedIndex={updatedIndex}
+          updatedTask={updatedTask}
+          getUpdateTask={getUpdateTask}
+          updateTask={updateTask}
         />
       </div>
       <a>Log out</a>

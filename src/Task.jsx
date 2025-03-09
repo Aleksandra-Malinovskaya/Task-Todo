@@ -12,7 +12,7 @@ const Task = ({
 }) => {
   return (
     <>
-      {updatedIndex === item.id ? (
+      {updatedIndex == item.id ? (
         <EditInput
           updatedTask={updatedTask}
           getUpdateTask={getUpdateTask}

@@ -1,3 +1,4 @@
+import Item from 'antd/es/list/Item';
 import { EditInput } from './EditInput';
 
 const Task = ({
@@ -16,13 +17,13 @@ const Task = ({
         <EditInput
           updatedTask={updatedTask}
           getUpdateTask={getUpdateTask}
-          updateTask={updateTask}
+          updateTask={() => updateTask(Item.id)}
         />
       ) : (
         <>
           <p
             style={{
-              textDecoration: item.isActive ? 'none' : 'line-through',
+              textDecoration: !item.isCompleted ? 'none' : 'line-through',
             }}
             onClick={() => taskDone(item.id)}
           >

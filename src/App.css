@@ -41,7 +41,10 @@ button {
   align-items: center;
   margin: 0.5vw;
 }
-
+p {
+  font-size: 0.85vw;
+  color: white;
+}
 .input_group input {
   margin-right: 10px;
   background-color: #9e72ea91;
@@ -65,4 +68,20 @@ a {
   color: white;
   text-decoration: underline;
   font-size: 0.85vw;
+}
+label {
+  font-size: 0.85vw;
+  color: white;
+}
+.custom-radio {
+  font-size: 0.85vw;
+  color: white;
+}
+.logOut {
+  background: none;
+  color: white;
+  font-size: 1.2vw;
+}
+.logOut:hover {
+  border-color: #9e72ea91;
 }

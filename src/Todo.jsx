@@ -1,69 +1,171 @@
-import { useState } from 'react';
 import './App.css';
-import { TasksList } from './TasksList';
-import { EditInput } from './EditInput';
+import { message } from 'antd';
+import { useState, useEffect } from 'react';
 import { AddInput } from './AddInput';
+import { TasksList } from './TasksList';
+import { useNavigate } from 'react-router-dom';
 
-function Todo({ logs }) {
-  const [tasks, setTasks] = useState([]);
+function Todo() {
   const [newTask, setNewTask] = useState('');
-  const [update, setUpdate] = useState(false);
-  const [updatedIndex, setUpdatedIndex] = useState(-1);
+  const [tasks, setTasks] = useState([]);
   const [updatedTask, setUpdatedTask] = useState('');
+  const [updatedIndex, setUpdatedIndex] = useState(-1);
+  const token = localStorage.getItem('token');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    getAllTasks();
+  }, []);
 
   const getNewTask = (e) => {
     setNewTask(e.target.value);
   };
 
-  const addNewTask = () => {
-    setTasks((prevValue) => [
-      ...prevValue,
-      {
-        id: prevValue.length,
-        title: newTask,
-        isActive: true,
-      },
-    ]);
-    logs('Add task:' + newTask);
+  async function getAllTasks() {
+    try {
+      const response = await fetch(
+        'https://todo-redev.herokuapp.com/api/todos',
+        {
+          method: 'GET',
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    setNewTask('');
-  };
+      const result = await response.json();
 
-  const deleteTask = (todoId) => {
-    setTasks((prevValue) => prevValue.filter((item) => item.id !== todoId));
-    logs('Delete task with index:' + todoId);
-  };
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed');
+      }
+      setTasks(result);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async function addNewTask() {
+    try {
+      const response = await fetch(
+        'https://todo-redev.herokuapp.com/api/todos',
+        {
+          method: 'POST',
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: newTask,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed');
+      }
+      message.success('Успешно добавлено');
+      setNewTask('');
+      await getAllTasks();
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   const getUpdateTask = (e) => {
     setUpdatedTask(e.target.value);
   };
 
-  const editTask = (todoId) => {
-    setUpdate((update) => !update);
-    setUpdatedTask(tasks.find((item) => item.id == todoId).title);
-    setUpdatedIndex(todoId);
+  async function updateTask(id) {
+    try {
+      const response = await fetch(
+        `https://todo-redev.herokuapp.com/api/todos/${id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: updatedTask,
+          }),
+        }
+      );
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed');
+      }
+      message.success('Успешно изменено');
+      setUpdatedTask('');
+      setUpdatedIndex(-1);
+      await getAllTasks();
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  const editTask = (id) => {
+    setUpdatedTask(tasks.find((item) => item.id == id).title);
+    setUpdatedIndex(id);
   };
 
-  const updateTask = () => {
-    setTasks((prevValue) =>
-      prevValue.map((item) => {
-        if (updatedIndex == item.id) {
-          return { ...item, title: updatedTask };
-        } else return item;
-      })
-    );
-    logs('Update task to:' + updatedTask);
-    setUpdate(false);
-    setUpdatedTask('');
-    setUpdatedIndex(-1);
-  };
+  async function deleteTask(id) {
+    try {
+      const response = await fetch(
+        `https://todo-redev.herokuapp.com/api/todos/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-  const taskDone = (todoId) => {
-    setTasks((prevValue) =>
-      prevValue.map((item) =>
-        todoId === item.id ? { ...item, isActive: !item.isActive } : item
-      )
-    );
+      const result = response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed');
+      }
+      message.success('Успешно удалено');
+      await getAllTasks();
+    } catch (error) {
+      console.log(message.error);
+    }
+  }
+
+  async function taskDone(id) {
+    try {
+      const response = await fetch(
+        `https://todo-redev.herokuapp.com/api/todos/${id}/isCompleted`,
+        {
+          method: 'PATCH',
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const result = response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed');
+      }
+      message.success('Статус изменён');
+      await getAllTasks();
+    } catch (error) {
+      console.log(message.error);
+    }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/authorization');
   };
 
   return (
@@ -76,19 +178,21 @@ function Todo({ logs }) {
             getNewTask={getNewTask}
             addNewTask={addNewTask}
           />
+          <TasksList
+            value={tasks}
+            taskDone={taskDone}
+            editTask={editTask}
+            deleteTask={deleteTask}
+            updatedIndex={updatedIndex}
+            updatedTask={updatedTask}
+            getUpdateTask={getUpdateTask}
+            updateTask={updateTask}
+          />
         </div>
-        <TasksList
-          value={tasks}
-          taskDone={taskDone}
-          editTask={editTask}
-          deleteTask={deleteTask}
-          updatedIndex={updatedIndex}
-          updatedTask={updatedTask}
-          getUpdateTask={getUpdateTask}
-          updateTask={updateTask}
-        />
       </div>
-      <a>Log out</a>
+      <button className="logOut" onClick={handleLogout}>
+        Log out
+      </button>
     </>
   );
 }

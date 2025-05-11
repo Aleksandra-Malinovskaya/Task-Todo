@@ -18,11 +18,11 @@ const TasksList = ({
             taskDone={taskDone}
             item={item}
             editTask={editTask}
-            deleteTask={deleteTask}
+            deleteTask={() => deleteTask(item.id)}
             updatedIndex={updatedIndex}
             updatedTask={updatedTask}
             getUpdateTask={getUpdateTask}
-            updateTask={updateTask}
+            updateTask={() => updateTask(item.id)}
           />
         </li>
       ))}

@@ -1,69 +1,56 @@
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import './App.css';
 import { TasksList } from './TasksList';
 import { EditInput } from './EditInput';
 import { AddInput } from './AddInput';
+import { addNewTask, deleteTask, updateTask, editTask } from './actions/TasksActions';
+import { setNewTask, setUpdatedId, setUpdatedTask } from './actions/FormActions';
 
 function Todo({ logs }) {
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState('');
-  const [update, setUpdate] = useState(false);
-  const [updatedIndex, setUpdatedIndex] = useState(-1);
-  const [updatedTask, setUpdatedTask] = useState('');
+  const tasks = useSelector(state => state.tasks);
+  const {newTask, updatedId, updatedTask} = useSelector(state => state.form)
+  const dispatch = useDispatch();
+  
 
   const getNewTask = (e) => {
-    setNewTask(e.target.value);
+    dispatch(setNewTask(e.target.value));
   };
 
-  const addNewTask = () => {
-    setTasks((prevValue) => [
-      ...prevValue,
-      {
-        id: prevValue.length,
-        title: newTask,
-        isActive: true,
-      },
-    ]);
+  const handleAddNewTask = () => {
+    dispatch(addNewTask(newTask));
+    dispatch(setNewTask(''));
     logs('Add task:' + newTask);
-
-    setNewTask('');
   };
 
-  const deleteTask = (todoId) => {
-    setTasks((prevValue) => prevValue.filter((item) => item.id !== todoId));
+  const handleDeleteTask = (todoId) => {
+    dispatch(deleteTask(todoId))
     logs('Delete task with index:' + todoId);
   };
 
   const getUpdateTask = (e) => {
-    setUpdatedTask(e.target.value);
+    dispatch(setUpdatedTask(e.target.value));
   };
 
-  const editTask = (todoId) => {
-    setUpdate((update) => !update);
-    setUpdatedTask(tasks.find((item) => item.id == todoId).title);
-    setUpdatedIndex(todoId);
+  const handleEditTask = (todoId) => {
+    const task = tasks.find(t => t.id === todoId);
+    if (task) {
+    dispatch(setUpdatedTask(task.title))
+    dispatch(setUpdatedId(todoId));
+    }
   };
 
-  const updateTask = () => {
-    setTasks((prevValue) =>
-      prevValue.map((item) => {
-        if (updatedIndex == item.id) {
-          return { ...item, title: updatedTask };
-        } else return item;
-      })
-    );
-    logs('Update task to:' + updatedTask);
-    setUpdate(false);
-    setUpdatedTask('');
-    setUpdatedIndex(-1);
+  const handleUpdateTask = () => {
+    if (updatedId !== -1) {
+      dispatch(updateTask(updatedId, updatedTask));
+      logs('Update task to:' + updatedTask);
+      dispatch(setUpdatedId(-1));
+      dispatch(setUpdatedTask(''));
+  }
   };
 
   const taskDone = (todoId) => {
-    setTasks((prevValue) =>
-      prevValue.map((item) =>
-        todoId === item.id ? { ...item, isActive: !item.isActive } : item
-      )
-    );
+    dispatch(editTask(todoId));
   };
 
   return (
@@ -74,18 +61,18 @@ function Todo({ logs }) {
           <AddInput
             newTask={newTask}
             getNewTask={getNewTask}
-            addNewTask={addNewTask}
+            addNewTask={handleAddNewTask}
           />
         </div>
         <TasksList
           value={tasks}
           taskDone={taskDone}
-          editTask={editTask}
-          deleteTask={deleteTask}
-          updatedIndex={updatedIndex}
+          editTask={handleEditTask}
+          deleteTask={handleDeleteTask}
+          updatedIndex={updatedId}
           updatedTask={updatedTask}
           getUpdateTask={getUpdateTask}
-          updateTask={updateTask}
+          updateTask={handleUpdateTask}
         />
       </div>
       <a>Log out</a>

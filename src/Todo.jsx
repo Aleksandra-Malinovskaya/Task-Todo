@@ -1,17 +1,21 @@
-import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './App.css';
 import { TasksList } from './TasksList';
-import { EditInput } from './EditInput';
 import { AddInput } from './AddInput';
-import { addNewTask, deleteTask, updateTask, editTask } from './actions/TasksActions';
-import { setNewTask, setUpdatedId, setUpdatedTask } from './actions/FormActions';
+import {
+  addNewTask,
+  deleteTask,
+  updateTask,
+  editTask,
+} from './slices/TaskSlice';
+import { setNewTask, setUpdatedId, setUpdatedTask } from './slices/FormSlice';
 
 function Todo({ logs }) {
-  const tasks = useSelector(state => state.tasks);
-  const {newTask, updatedId, updatedTask} = useSelector(state => state.form)
+  const tasks = useSelector((state) => state.tasks);
+  const { newTask, updatedId, updatedTask } = useSelector(
+    (state) => state.forms
+  );
   const dispatch = useDispatch();
-  
 
   const getNewTask = (e) => {
     dispatch(setNewTask(e.target.value));
@@ -24,7 +28,7 @@ function Todo({ logs }) {
   };
 
   const handleDeleteTask = (todoId) => {
-    dispatch(deleteTask(todoId))
+    dispatch(deleteTask(todoId));
     logs('Delete task with index:' + todoId);
   };
 
@@ -33,20 +37,20 @@ function Todo({ logs }) {
   };
 
   const handleEditTask = (todoId) => {
-    const task = tasks.find(t => t.id === todoId);
+    const task = tasks.find((t) => t.id === todoId);
     if (task) {
-    dispatch(setUpdatedTask(task.title))
-    dispatch(setUpdatedId(todoId));
+      dispatch(setUpdatedTask(task.title));
+      dispatch(setUpdatedId(todoId));
     }
   };
 
   const handleUpdateTask = () => {
     if (updatedId !== -1) {
-      dispatch(updateTask(updatedId, updatedTask));
+      dispatch(updateTask({ id: updatedId, title: updatedTask }));
       logs('Update task to:' + updatedTask);
       dispatch(setUpdatedId(-1));
       dispatch(setUpdatedTask(''));
-  }
+    }
   };
 
   const taskDone = (todoId) => {

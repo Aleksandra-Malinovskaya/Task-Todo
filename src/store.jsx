@@ -1,16 +1,14 @@
-import { legacy_createStore as createStore, combineReducers } from "redux";
-import { composeWithDevTools } from "@redux-devtools/extension";
-import { TasksReducer } from "./reducers/TasksReducers";
-import { FormReduser } from "./reducers/FormReducers";
+import { configureStore } from '@reduxjs/toolkit';
+import { logger } from 'redux-logger';
+import TaskSlice from './slices/TaskSlice';
+import FormSlice from './slices/FormSlice';
 
-const rootReducer = combineReducers({
-    tasks: TasksReducer,
-    form: FormReduser,
+const store = configureStore({
+  reducer: {
+    tasks: TaskSlice,
+    forms: FormSlice,
+  },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
 
-const store = createStore(
-    rootReducer,
-    composeWithDevTools()
-)
-
-export {store};
+export { store };

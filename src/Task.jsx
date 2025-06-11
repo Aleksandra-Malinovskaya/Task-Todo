@@ -1,37 +1,34 @@
 import { EditInput } from './EditInput';
+import { useDispatch } from 'react-redux';
+import { deleteTask, editTask } from './slices/TaskSlice';
+import { setUpdatedId, setUpdatedTask } from './slices/FormSlice';
 
-const Task = ({
-  taskDone,
-  item,
-  editTask,
-  deleteTask,
-  updatedIndex,
-  updatedTask,
-  getUpdateTask,
-  updateTask,
-}) => {
+const Task = ({ item, isActivate }) => {
+  const dispatch = useDispatch();
+  const handleTaskDone = () => dispatch(editTask(item.id));
+  const handleEdit = () => {
+    dispatch(setUpdatedTask(item.title));
+    dispatch(setUpdatedId(item.id));
+  };
+  const handleDelete = () => dispatch(deleteTask(item.id));
   return (
     <>
-      {updatedIndex === item.id ? (
-        <EditInput
-          updatedTask={updatedTask}
-          getUpdateTask={getUpdateTask}
-          updateTask={updateTask}
-        />
+      {isActivate ? (
+        <EditInput />
       ) : (
         <>
           <p
             style={{
               textDecoration: item.isActive ? 'none' : 'line-through',
             }}
-            onClick={() => taskDone(item.id)}
+            onClick={handleTaskDone}
           >
             {item.title}
           </p>
-          <button onClick={() => editTask(item.id)}>
+          <button onClick={handleEdit}>
             <img src="./img/edit.png" alt="Edit" />
           </button>
-          <button onClick={() => deleteTask(item.id)}>
+          <button onClick={handleDelete}>
             <img src="./img/delete.png" alt="Delete" />
           </button>
         </>

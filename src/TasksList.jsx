@@ -1,29 +1,16 @@
 import { Task } from './Task';
+import { useSelector } from 'react-redux';
+import { getTasksSelector } from './slices/TaskSlice';
+import { getFormSelector } from './slices/FormSlice';
 
-const TasksList = ({
-  value,
-  taskDone,
-  editTask,
-  deleteTask,
-  updatedIndex,
-  updatedTask,
-  getUpdateTask,
-  updateTask,
-}) => {
+const TasksList = () => {
+  const tasks = useSelector(getTasksSelector);
+  const { updatedId } = useSelector(getFormSelector);
   return (
     <ul>
-      {value.map((item) => (
+      {tasks.map((item) => (
         <li key={item.id}>
-          <Task
-            taskDone={taskDone}
-            item={item}
-            editTask={editTask}
-            deleteTask={deleteTask}
-            updatedIndex={updatedIndex}
-            updatedTask={updatedTask}
-            getUpdateTask={getUpdateTask}
-            updateTask={updateTask}
-          />
+          <Task item={item} isActivate={updatedId === item.id} />
         </li>
       ))}
     </ul>

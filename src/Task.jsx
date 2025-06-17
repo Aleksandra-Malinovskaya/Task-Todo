@@ -1,11 +1,11 @@
 import { EditInput } from './EditInput';
 import { useDispatch } from 'react-redux';
-import { deleteTask, editTask } from './slices/TaskSlice';
+import { deleteTask, toggleTaskStatus } from './slices/TaskSlice';
 import { setUpdatedId, setUpdatedTask } from './slices/FormSlice';
 
 const Task = ({ item, isActivate }) => {
   const dispatch = useDispatch();
-  const handleTaskDone = () => dispatch(editTask(item.id));
+  const handleTaskDone = () => dispatch(toggleTaskStatus(item.id));
   const handleEdit = () => {
     dispatch(setUpdatedTask(item.title));
     dispatch(setUpdatedId(item.id));
@@ -19,7 +19,7 @@ const Task = ({ item, isActivate }) => {
         <>
           <p
             style={{
-              textDecoration: item.isActive ? 'none' : 'line-through',
+              textDecoration: item.isCompleted ? 'line-through' : 'none',
             }}
             onClick={handleTaskDone}
           >

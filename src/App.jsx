@@ -1,8 +1,29 @@
 import './App.css';
-import { LoggedTodoList } from './WithLogger';
+import { Todo } from './Todo';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { RegistrPage } from './RegistrPage';
+import { AuthPage } from './AuthPage';
+import { useSelector } from 'react-redux';
 
 function App() {
-  return <LoggedTodoList />;
+  const { token } = useSelector((state) => state.auth);
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={token ? <Navigate to="/todoList" /> : <RegistrPage />}
+      />
+      <Route
+        path="/authorization"
+        element={token ? <Navigate to="/todoList" /> : <AuthPage />}
+      />
+      <Route
+        path="/todoList"
+        element={token ? <Todo /> : <Navigate to="/authorization" />}
+      />
+    </Routes>
+  );
 }
 
 export default App;

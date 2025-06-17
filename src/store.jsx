@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { logger } from 'redux-logger';
-import { TaskSlice } from './slices/TaskSlice';
+import { taskSlice } from './slices/TaskSlice';
 import { FormSlice } from './slices/FormSlice';
+import { authSlice } from './slices/AuthSlice';
 
 const store = configureStore({
   reducer: {
-    tasks: TaskSlice.reducer,
+    tasks: taskSlice.reducer,
     forms: FormSlice.reducer,
+    auth: authSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });

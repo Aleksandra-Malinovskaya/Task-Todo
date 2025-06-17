@@ -1,14 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { setNewTask } from './slices/FormSlice';
-import { addNewTask } from './slices/TaskSlice';
+import { addTask } from './slices/TaskSlice';
 import { getFormSelector } from './slices/FormSlice';
 
 const AddInput = () => {
   const dispatch = useDispatch();
   const { newTask } = useSelector(getFormSelector);
+
   const handleAddTask = () => {
     if (newTask.trim()) {
-      dispatch(addNewTask(newTask));
+      dispatch(addTask(newTask));
       dispatch(setNewTask(''));
     }
   };

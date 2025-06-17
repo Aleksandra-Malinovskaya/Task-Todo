@@ -1,9 +1,28 @@
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './App.css';
 import { TasksList } from './TasksList';
 import { AddInput } from './AddInput';
+import { logout } from './slices/AuthSlice';
+import { fetchTasks } from './slices/TaskSlice';
+import { useNavigate } from 'react-router-dom';
 
 function Todo() {
+  const dispatch = useDispatch();
+  const { token } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchTasks());
+    }
+  }, [dispatch, token]);
+
+  const handleLogout = async () => {
+    await dispatch(logout());
+    navigate('/authorization', { replace: true });
+  };
+
   return (
     <>
       <div className="main">
@@ -13,7 +32,7 @@ function Todo() {
         </div>
         <TasksList />
       </div>
-      <a>Log out</a>
+      <button onClick={handleLogout}>Log out</button>
     </>
   );
 }

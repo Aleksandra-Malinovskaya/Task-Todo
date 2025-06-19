@@ -18,7 +18,11 @@ const AuthPage = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({resolver: zodResolver(loginSchema)});
+  } = useForm({resolver: zodResolver(loginSchema),
+  defaultValues:{
+    email: '',
+    password: '',
+  }});
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

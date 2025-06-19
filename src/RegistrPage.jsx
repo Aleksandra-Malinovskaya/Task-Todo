@@ -25,7 +25,11 @@ const RegistrPage = () => {
     formState: { errors },
   } = useForm({resolver: zodResolver(registrSchema),
   defaultValues:{
+    username: '',
+    email: '',
+    password: '',
     gender: '',
+    age: '',
   }});
   async function onSubmit(data) {
     try {

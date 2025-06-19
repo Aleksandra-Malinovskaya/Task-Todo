@@ -56,7 +56,7 @@ const RegistrPage = () => {
             control={control}
             render={({ field }) => <Input {...field} placeholder="username" />}
           />
-          <p>{errors.name?.message}</p>
+          <p>{errors.username?.message}</p>
         </div>
         <div>
           <label>Email:</label>

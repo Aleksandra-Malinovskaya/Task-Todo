@@ -6,6 +6,7 @@ import { AddInput } from './AddInput';
 import { logout } from './slices/AuthSlice';
 import { fetchTasks } from './slices/TaskSlice';
 import { useNavigate } from 'react-router-dom';
+import { ROUTES } from './routes';
 
 function Todo() {
   const dispatch = useDispatch();
@@ -20,7 +21,7 @@ function Todo() {
 
   const handleLogout = async () => {
     await dispatch(logout());
-    navigate('/authorization', { replace: true });
+    navigate(ROUTES.AUTH);
   };
 
   return (

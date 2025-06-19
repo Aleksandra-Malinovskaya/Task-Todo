@@ -6,7 +6,7 @@ const initialState = {
   updatedTask: '',
 };
 
-export const FormSlice = createSlice({
+export const formSlice = createSlice({
   name: 'forms',
   initialState,
   reducers: {
@@ -31,5 +31,5 @@ export const FormSlice = createSlice({
 });
 
 export const { setNewTask, setUpdatedId, setUpdatedTask, resetForm } =
-  FormSlice.actions;
-export const { getFormSelector } = FormSlice.selectors;
+  formSlice.actions;
+export const { getFormSelector } = formSlice.selectors;

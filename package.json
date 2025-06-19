@@ -16,6 +16,7 @@
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
     "@hookform/devtools": "^4.4.0",
+    "@hookform/resolvers": "^5.1.1",
     "@reduxjs/toolkit": "^2.8.2",
     "antd": "^5.26.0",
     "axios": "^1.9.0",
@@ -26,7 +27,8 @@
     "react-router-dom": "^7.6.2",
     "redux": "^5.0.1",
     "redux-logger": "^3.0.6",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

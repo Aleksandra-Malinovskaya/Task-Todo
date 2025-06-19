@@ -4,13 +4,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import './App.css';
 import { useDispatch } from 'react-redux';
 import { loginUser } from './slices/AuthSlice';
+import { ROUTES } from './routes';
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
+
+const loginSchema = z.object({
+  email: z.string().min(1,'Поле обязательно для заполнения').email('Введите корректный email'),
+  password: z.string().min(6,'Пароль должен быть не менее 6 символов').regex(/^(?=.*[A-Z]).*$/, 'Пароль должен содержать заглавную букву'),
+})
 
 const AuthPage = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({resolver: zodResolver(loginSchema)});
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -28,7 +36,7 @@ const AuthPage = () => {
       }
 
       message.success('Вход выполнен успешно');
-      navigate('/todoList');
+      navigate(ROUTES.TODO);
     } catch (error) {
       message.error(error.message || 'Ошибка входа. Проверьте email и пароль');
     }
@@ -42,13 +50,6 @@ const AuthPage = () => {
           <Controller
             name="email"
             control={control}
-            rules={{
-              required: 'Поле обязательно для заполнения',
-              pattern: {
-                value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/,
-                message: 'Введите корректный email',
-              },
-            }}
             render={({ field }) => <Input {...field} placeholder="Email" />}
           />
           <p>{errors.email?.message}</p>
@@ -58,18 +59,6 @@ const AuthPage = () => {
           <Controller
             name="password"
             control={control}
-            rules={{
-              required: 'Поле обязательно для заполнения',
-              minLength: {
-                value: 6,
-                message: 'Пароль должен быть не менее 6 символов',
-              },
-              pattern: {
-                value: /^(?=.*[A-Z]).*$/,
-                message:
-                  'Пароль должен содержать как минимум одну заглавную букву',
-              },
-            }}
             render={({ field }) => (
               <Input {...field} type="password" placeholder="password" />
             )}
@@ -79,7 +68,7 @@ const AuthPage = () => {
         <button type="submit">Log In</button>
       </form>
       <p>
-        Don't have an acount? <Link to="/">Sign up</Link>
+        Don't have an acount? <Link to={ROUTES.MAIN}>Sign up</Link>
       </p>
     </>
   );

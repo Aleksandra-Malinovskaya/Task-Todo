@@ -4,6 +4,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import './App.css';
 import { useDispatch } from 'react-redux';
 import { registerUser } from './slices/AuthSlice';
+import { ROUTES } from './routes';
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
+
+const registrSchema = z.object({
+  username: z.string().min(1, 'Поле обязательно для заполнения'),
+  email: z.string().min(1,'Поле обязательно для заполнения').email('Введите корректный email'),
+  password: z.string().min(6,'Пароль должен быть не менее 6 символов').regex(/^(?=.*[A-Z]).*$/, 'Пароль должен содержать заглавную букву'),
+  gender: z.string().min(1, 'Поле обязательно для заполнения'),
+  age: z.coerce.number().min(18,'Возраст должен быть не менее 18 лет').int('Возраст должен быть целым числом').positive('Возраст должен быть положительным'),
+})
 
 const RegistrPage = () => {
   const navigate = useNavigate();
@@ -12,7 +23,10 @@ const RegistrPage = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({resolver: zodResolver(registrSchema),
+  defaultValues:{
+    gender: '',
+  }});
   async function onSubmit(data) {
     try {
       const result = await dispatch(registerUser(data));
@@ -22,7 +36,7 @@ const RegistrPage = () => {
       }
 
       message.success('Регистрация прошла успешно!');
-      navigate('/todoList');
+      navigate(ROUTES.TODO);
     } catch (error) {
       message.error(error.message || 'Ошибка регистрации');
     }
@@ -36,9 +50,6 @@ const RegistrPage = () => {
           <Controller
             name="username"
             control={control}
-            rules={{
-              required: 'Поле обязательно для заполнения',
-            }}
             render={({ field }) => <Input {...field} placeholder="username" />}
           />
           <p>{errors.name?.message}</p>
@@ -48,13 +59,6 @@ const RegistrPage = () => {
           <Controller
             name="email"
             control={control}
-            rules={{
-              required: 'Поле обязательно для заполнения',
-              pattern: {
-                value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/,
-                message: 'Введите корректный email',
-              },
-            }}
             render={({ field }) => <Input {...field} placeholder="Email" />}
           />
           <p>{errors.email?.message}</p>
@@ -64,18 +68,6 @@ const RegistrPage = () => {
           <Controller
             name="password"
             control={control}
-            rules={{
-              required: 'Поле обязательно для заполнения',
-              minLength: {
-                value: 6,
-                message: 'Пароль должен быть не менее 6 символов',
-              },
-              pattern: {
-                value: /^(?=.*[A-Z]).*$/,
-                message:
-                  'Пароль должен содержать как минимум одну заглавную букву',
-              },
-            }}
             render={({ field }) => (
               <Input {...field} type="password" placeholder="password" />
             )}
@@ -87,9 +79,6 @@ const RegistrPage = () => {
           <Controller
             name="gender"
             control={control}
-            rules={{
-              required: 'Поле обязательно для заполнения',
-            }}
             render={({ field }) => (
               <Radio.Group {...field}>
                 <Radio className="custom-radio" value="male">
@@ -108,9 +97,6 @@ const RegistrPage = () => {
           <Controller
             name="age"
             control={control}
-            rules={{
-              required: 'Поле обязательно для заполнения',
-            }}
             render={({ field }) => (
               <Input type="number" {...field} placeholder="Age" />
             )}
@@ -120,7 +106,7 @@ const RegistrPage = () => {
         <button type="submit">Sign Up</button>
       </form>
       <p>
-        Already have an acount?<Link to="/authorization">Log in</Link>
+        Already have an acount?<Link to={ROUTES.AUTH}>Log in</Link>
       </p>
     </>
   );

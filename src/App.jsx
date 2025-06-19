@@ -1,28 +1,25 @@
 import './App.css';
-import { Todo } from './Todo';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { RegistrPage } from './RegistrPage';
-import { AuthPage } from './AuthPage';
+import { Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Suspense } from 'react';
+import { routerConfig } from './routerConfig';
 
 function App() {
   const { token } = useSelector((state) => state.auth);
+  const routes = routerConfig(token);
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <Routes>
-      <Route
-        path="/"
-        element={token ? <Navigate to="/todoList" /> : <RegistrPage />}
+      {routes.map((route, index)=>(
+        <Route
+        key={index}
+        path={route.path}
+        element={route.element}
       />
-      <Route
-        path="/authorization"
-        element={token ? <Navigate to="/todoList" /> : <AuthPage />}
-      />
-      <Route
-        path="/todoList"
-        element={token ? <Todo /> : <Navigate to="/authorization" />}
-      />
+      ))}
     </Routes>
+    </Suspense>
   );
 }
 
